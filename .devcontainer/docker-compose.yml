@@ -17,17 +17,14 @@ services:
       - "443:443"
       - "3000:3000"
       - "3306:3306"
-      - "5432:5432"
-      - "6379:6379"
       - "8080:8080"
       - "8081:8081"
-      - "27017:27017"
     init: true
     volumes:
       # Forwards the local Docker socket to the container.
       - /var/run/docker.sock:/var/run/docker-host.sock 
-      - ../:/var/www
-    working_dir: /var/www
+      - ../:../
+    working_dir: ../
     entrypoint: /usr/local/share/docker-init.sh
     command: sleep infinity
 
@@ -55,8 +52,8 @@ services:
         - XDEBUG_REMOTE_PORT=${XDEBUG_REMOTE_PORT}
     env_file: ../.env
     volumes:
-      - ../:/var/www
-    working_dir: /var/www
+      - ../:../
+    working_dir: ./
     network_mode: service:workspace
 
   composer:
@@ -65,16 +62,8 @@ services:
     command: install
     env_file: ../.env
     volumes:
-      - ../:/var/www
-    working_dir: /var/www
-
-  node:
-    build: ./docker/node
-    env_file: ../.env
-    tty: true
-    volumes:
-      - ../:/var/www
-    working_dir: /var/www
+      - ../:./
+    working_dir: ./
 
   mariadb:
     image: mariadb:10.5
@@ -87,43 +76,15 @@ services:
       default:
         aliases:
           - mysql
-
-  postgres:
-    build: ./docker/postgres
-    env_file: ../.env
-    volumes:
-      - postgres:/var/lib/postgresql/data
-
-  mongo:
-    image: mongo
-    restart: always
-    env_file: ../.env
-    volumes:
-      - mongo:/data/db
-
+          
   redis:
     image: redis:6.0
     env_file: ../.env
     volumes:
-      - redis:/data
-
-  adminer:
-    image: adminer
-    restart: always
-    network_mode: service:workspace
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    env_file: ../.env
-    network_mode: service:workspace
+      - redis:/tmp/
 
 volumes:
   mariadb:
-    driver: local
-  postgres:
-    driver: local
-  mongo:
     driver: local
   redis:
     driver: local
