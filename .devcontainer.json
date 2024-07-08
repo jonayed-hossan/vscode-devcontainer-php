@@ -4,8 +4,6 @@
         ".devcontainer/docker-compose.yml"
     ],
     "service": "workspace",
-    "workspaceFolder": "/var/www",
-
     "remoteEnv": {
         "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolderBasename}"
     },
